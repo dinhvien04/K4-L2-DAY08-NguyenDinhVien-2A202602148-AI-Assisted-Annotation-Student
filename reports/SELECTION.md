@@ -18,7 +18,7 @@ Trong 50 dòng đứng đầu `outputs/selection_round1.csv`, nếu chỉ có ng
 ### Ba frame thuộc lô 12 ảnh model chọn và bằng chứng trong CSV / ảnh contact sheet (`selection_round1.jpg`):
 
 1. **`frame_0182.jpg` (Rank 1, t_sec: 72.8s, Score: 0.9591)**:
-   - *Bằng chứng*: Trên contact sheet, ảnh hiển thị mật độ xe dày đặc ở cả làn ngược chiều lẫn cùng chiều. Đèn pha các xe con ở làn giữa chiếu vệt sáng kéo dài trên mặt đường ướt. CSV ghi nhận `U = 0.9182`, `A = 1.0000` (mức tối đa với 18 box mơ hồ), thể hiện mô hình rất phân vân tại các ngưỡng confidence quanh 0.25–0.50.
+   - *Bằng chứng*: Trên contact sheet, ảnh hiển thị mật độ xe dày đặc ở cả làn ngược chiều lẫn cùng chiều. Đèn pha các xe con ở làn giữa chiếu vệt sáng kéo dài trên mặt đường ướt. CSV ghi nhận `U = 0.9182`, `A = 1.0000` (mức tối đa với 18 box mơ hồ), thể hiện mô hình có rất nhiều box rơi vào khoảng mập mờ $0.15 \le \text{confidence} < 0.50$.
 2. **`frame_0331.jpg` (Rank 5, t_sec: 132.4s, Score: 0.9154)**:
    - *Bằng chứng*: Trên contact sheet, đây là frame có số lượng phương tiện lớn và phức tạp nhất với các xe tải lớn, xe khách và dòng xe con nối đuôi. CSV chứng minh đây là ảnh có số box đề xuất cao nhất trong lô (`n_boxes: 47`, `n_ambiguous: 18`, `A: 1.0000`).
 3. **`frame_0392.jpg` (Rank 15, t_sec: 156.8s, Score: 0.8874)**:

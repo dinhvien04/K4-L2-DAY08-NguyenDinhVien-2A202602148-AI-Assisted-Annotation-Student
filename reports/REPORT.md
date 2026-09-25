@@ -2,7 +2,7 @@
 
 Họ và tên: Nguyen Dinh Vien
 
-Công cụ gán nhãn đã dùng: CVAT / AnyLabeling (định dạng xuất Ultralytics YOLO Detection 1.0)
+Công cụ gán nhãn đã dùng: CVAT Docker trên máy cá nhân
 
 ---
 
@@ -44,7 +44,7 @@ Công thức tính điểm ưu tiên chọn mẫu:
 $$\text{score} = W_U \cdot U + W_A \cdot A + W_D \cdot D = 0.5 \cdot U + 0.3 \cdot A + 0.2 \cdot D$$
 
 - **$U$ (Uncertainty - trọng số 0.5)**: Đo lường độ bất định của các bounding box do mô hình đề xuất trên frame. Điểm $U$ càng cao chứng tỏ mô hình càng thiếu tự tin (phân vân về xác suất phân lớp quanh ngưỡng quyết định). Chiếm 50% trọng số vì đây là tín hiệu cốt lõi của Active Learning.
-- **$A$ (Ambiguity - trọng số 0.3)**: Đo tỷ lệ và số lượng các box rơi vào "vùng mơ hồ" (confidence nằm trong khoảng 0.25 đến 0.50). Frame có nhiều box mơ hồ là frame mà AI do dự nhiều nhất giữa việc giữ hay bỏ, rất cần sự thẩm định của con người.
+- **$A$ (Ambiguity - trọng số 0.3)**: Đo tỷ lệ và số lượng các box "mập mờ" rơi vào khoảng $0.15 \le \text{confidence} < 0.50$, chia cho giá trị lớn nhất trong pool để chuẩn hóa. Frame có nhiều box mơ hồ trong khoảng này là frame mà AI do dự nhiều nhất giữa việc giữ hay bỏ, rất cần sự thẩm định của con người.
 - **$D$ (Diversity - trọng số 0.2)**: Đại diện cho độ phân tán theo trục thời gian, giúp trải đều các mẫu được chọn qua toàn bộ video, tránh tập trung cục bộ.
 - **Vai trò của `MIN_GAP_S = 2.0s`**: Đây là ràng buộc khoảng cách thời gian tối thiểu giữa hai ảnh được chọn vào cùng một lô. Vì camera cố định và xe chạy trên đường cao tốc, hai ảnh cách nhau dưới 2 giây có góc nhìn, bối cảnh và các phương tiện gần như giống hệt nhau (near-duplicates). Ràng buộc `MIN_GAP_S` đóng vai trò cơ chế ức chế phi cực đại (Non-Maximum Suppression theo thời gian), ngăn chặn việc lãng phí ngân sách gán nhãn vào các frame trùng lặp.
 
