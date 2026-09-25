@@ -1,0 +1,5 @@
+round,frame_id,object,action,rule_or_reason
+1,frame_0099.jpg,xe con ngược chiều làn trái bị vệt đèn pha,edited,Thu hẹp box để ôm sát thân xe loại bỏ vệt sáng đèn pha phản chiếu trên mặt đường theo GUIDELINE_LABEL.md
+1,frame_0182.jpg,box trùng lặp và vệt phản chiếu dải phân cách,deleted,Xóa 2 box AI gán nhầm vệt đèn phản chiếu trên dải phân cách và box trùng lặp theo GUIDELINE_LABEL.md
+1,frame_0099.jpg,xe ở xa phía trước bên phải có đèn hậu đỏ,added,Thêm box cho xe ở xa có 2 chấm đèn hậu đỏ nhìn rõ thân xe và ranh giới theo GUIDELINE_LABEL.md
+1,frame_0331.jpg,xe buýt và xe tải lớn chạy cùng chiều,accepted,Box AI đề xuất ôm sát thân xe và cụm đèn chuẩn xác theo GUIDELINE_LABEL.md
