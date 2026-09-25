@@ -92,9 +92,9 @@ Trên 12 ảnh của lô 1, mô hình đề xuất 169 box, sau khi con người
   2. *Độ phủ giảm mạnh (Recall giảm)*: Do kích thước tập huấn luyện quá nhỏ (chỉ 12 ảnh với 340 box) nhưng lại huấn luyện trong 50 epochs bắt đầu từ checkpoint `yolov8n.pt`, mô hình có thể đã trải qua hiện tượng **dịch chuyển phân bố độ tự tin (confidence calibration shift)**. Mô hình trở nên quá dè dặt (under-confident) với các vật thể ở xa hoặc ánh sáng yếu; điểm confidence của các xe này bị đẩy xuống dưới ngưỡng lọc mặc định `conf_thr = 0.25`, dẫn đến bị tính là FN dù có thể box dự đoán vẫn tồn tại ở ngưỡng thấp hơn.
 
 ### 4.4. Đối chiếu giữa Blind Scan, Review Log và Kết quả Model
-- **Quan sát độc lập (`BLIND_SCAN.md` trên `frame_0099.jpg`)**: Người quét độc lập đếm thấy 24 xe bằng mắt thường, dự báo AI sẽ bắt nhầm vệt đèn pha rọi dài xuống mặt đường ướt và bỏ sót các xe nhỏ phía xa.
-- **Lỗi pre-label đã sửa (`round1_diff.md` & `REVIEW_LOG.csv`)**: Thực tế AI chỉ đề xuất 13 box trên `frame_0099.jpg`. Người đã thêm 11 box xe bị sót, chỉnh sửa 7 box bị phình to do dính vệt đèn pha và giữ nguyên 6 box đúng, nâng tổng số box lên 24. Trong `REVIEW_LOG.csv`, các ca chỉnh sửa và thêm mới này được ghi nhận cụ thể theo đúng `GUIDELINE_LABEL.md`.
-- **Kết quả model sau fine-tune**: Model khắc phục hoàn hảo việc phát hiện nhầm vệt sáng (Precision đạt 1.000 trên cả 20 ảnh test), nhưng lại sinh ra hiệu ứng phụ là quá khắt khe, bỏ sót nhiều xe nhỏ/xa khiến Recall giảm.
+- **Quan sát độc lập (`BLIND_SCAN.md` trên `frame_0099.jpg`)**: Người quét độc lập đếm thấy 21 xe bằng mắt thường, dự báo AI sẽ bắt nhầm vệt đèn pha rọi dài xuống mặt đường ướt và bỏ sót các xe nhỏ phía xa.
+- **Lỗi pre-label đã sửa (`round1_diff.md` & `REVIEW_LOG.csv`)**: Thực tế AI chỉ đề xuất 13 box trên `frame_0099.jpg`. Người đã thêm 11 box xe bị sót, chỉnh sửa 7 box bị phình to do dính vệt đèn pha và giữ nguyên 6 box đúng, nâng tổng số box sau khi sửa lên 24 box. Trong `REVIEW_LOG.csv`, các ca chỉnh sửa và thêm mới này được ghi nhận cụ thể theo đúng `GUIDELINE_LABEL.md`.
+- **Kết quả model sau fine-tune**: Trên 20 ảnh test tại ngưỡng confidence 0.25, Round 1 có FP = 0 và Precision = 1.000. Tuy nhiên Recall giảm mạnh, nên chưa thể kết luận mô hình đã khắc phục hoàn toàn lỗi nhận nhầm vệt sáng ngoài tập test.
 - **Ca khó theo guideline**: Xe con tối màu chạy ngược chiều ở làn trái (`frame_0099.jpg`): Đèn pha rọi vệt sáng rất mạnh xuống mặt đường ướt trong khi thân xe màu đen chìm hoàn toàn vào bóng đêm. Quy tắc yêu cầu chỉ vẽ box ôm sát thân xe đoán được, loại bỏ vệt sáng đèn pha. Đây là tình huống khó đòi hỏi người gán nhãn phải ước lượng hình học xe dựa trên vị trí cụm đèn pha.
 
 ---
@@ -102,9 +102,9 @@ Trên 12 ảnh của lô 1, mô hình đề xuất 169 box, sau khi con người
 ## 5. Kết luận và giới hạn
 
 ### 5.1. Đánh giá kết quả và quyết định dừng/tiếp tục
-- **Kết quả**: Vòng 1 ghi nhận bước tiến lớn về độ sạch của nhãn (Precision đạt 1.000, sạch bóng False Positive), nhưng AP50 sụt giảm (-0.159) do Recall giảm sâu, đặc biệt ở nhóm xe nhỏ (Recall = 0.000).
+- **Kết quả**: Trên 20 ảnh test tại ngưỡng confidence 0.25, Round 1 có FP = 0 và Precision = 1.000. Tuy nhiên AP50 sụt giảm (-0.159) do Recall giảm sâu (từ 0.489 xuống 0.218), đặc biệt ở nhóm xe nhỏ (Recall = 0.000).
 - **Quyết định**: **DỪNG LẠI, KHÔNG LÀM TIẾP VÒNG 2**.
-  - *Lý do*: Sự suy giảm AP50 không bắt nguồn từ việc thiếu số lượng ảnh dán nhãn, mà xuất phát từ việc cấu hình huấn luyện (50 epochs trên 12 ảnh với learning rate mặc định) gây co cụm độ tự tin (under-confidence). Nếu tiếp tục gán nhãn thêm 12 ảnh ở vòng 2 mà không tinh chỉnh siêu tham số (như learning rate, freeze backbone, hoặc hạ ngưỡng confidence khi đánh giá), ta sẽ tiếp tục tiêu tốn công sức vô ích mà không giải quyết được gốc rễ bài toán.
+  - *Lý do*: Một giả thuyết cần kiểm tra là việc fine-tune 50 epochs trên tập rất nhỏ gồm 12 ảnh có thể làm thay đổi phân bố confidence của mô hình. Tuy nhiên, chưa đủ bằng chứng để khẳng định đây là nguyên nhân chính của việc AP50 giảm. Việc tiếp tục gán nhãn thêm 12 ảnh ở vòng 2 mà chưa rà soát lại siêu tham số (như learning rate, freeze backbone) hay phân tích kỹ phân bố confidence có thể sẽ tiếp tục tiêu tốn công sức mà chưa đem lại hiệu quả rõ ràng.
 
 ### 5.2. Đề xuất hai ca còn yếu/bất định cho vòng sau (nếu tiếp tục)
 1. **Ca 1 - Xe kích thước nhỏ ở cự ly xa (`small cars`)**: Cần chọn các frame có mật độ xe nhỏ cao ở phía chân trời để model học lại đặc trưng nhận dạng xe qua cụm đèn trong đêm, giải quyết mức recall 0.000 hiện tại.
